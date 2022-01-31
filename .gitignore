@@ -1,4 +1,4 @@
 venv/
 outputs/
-models/
 datasets/
+__pycache__/

@@ -16,7 +16,6 @@ class ConfigModels:
     preprocessing: Optional[dict] = None
     pretrained: Optional[bool] = True
     state_dict_path: Optional[str] = None
-    download: Optional[bool] = False
     device: Optional[str] = "cpu"
 
 

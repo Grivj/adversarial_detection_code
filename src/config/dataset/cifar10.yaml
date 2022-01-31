@@ -1,2 +1,2 @@
-path: "../../../datasets/cifar10/val"
+path: "../../../datasets/cifar10/train"
 transforms: { "ToTensor" }

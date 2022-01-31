@@ -1,4 +1,6 @@
+import os
 import pickle
+import sys
 from datetime import datetime
 from importlib import import_module
 from time import time
@@ -23,10 +25,32 @@ def get_transforms(transforms_config: dict) -> list:
 
 
 def get_dataset(config: ConfigDatasets):
-    return ImageFolder(
-        root=config.path,
-        transform=get_transforms(config.transforms) if "transforms" in config else None,
-    )
+    # default, base pytorch ImageFolder is used.
+    if "module" not in config:
+        return ImageFolder(
+            root=config.path,
+            transform=get_transforms(config.transforms)
+            if "transforms" in config
+            else None,
+        )
+
+    # custom dataset module and class.
+    if "class_" not in config:
+        raise ValueError(
+            "If a custom module is specified for the dataset, class_ must also be specified (Name of the class in the module)"
+        )
+    currentdir = os.path.dirname(os.path.realpath(__file__))
+    basedir = os.path.dirname(currentdir)
+    sys.path.append(basedir)
+    module = import_module(config.module)
+    if "class_" in config:
+        class_ = getattr(module, config.class_)
+        return class_(
+            root=config.path,
+            transform=get_transforms(config.transforms)
+            if "transforms" in config
+            else None,
+        )
 
 
 def get_loader(config: ConfigDatasets):
@@ -41,9 +65,6 @@ def get_loader(config: ConfigDatasets):
 
 
 def get_model(config: ConfigModels):
-    import os
-    import sys
-
     currentdir = os.path.dirname(os.path.realpath(__file__))
     basedir = os.path.dirname(currentdir)
     sys.path.append(basedir)
@@ -51,13 +72,12 @@ def get_model(config: ConfigModels):
     module = import_module(config.module)
     model = getattr(module, config.model)
     if "pretrained" in config:
-        model = model(pretrained=config.pretrained)
+        return model(pretrained=True).eval()
     if "state_dict_path" in config:
         import torch
 
         model = model()
-        model.load_state_dict(torch.load(config.state_dict_path))
-    return model.eval()
+        return model.load_state_dict(torch.load(config.state_dict_path)).eval()
 
 
 def get_fmodel(config: ConfigModels):

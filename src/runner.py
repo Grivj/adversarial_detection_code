@@ -2,30 +2,23 @@ from dataclasses import dataclass
 from typing import Optional
 
 import torch
-from foolbox.models.pytorch import PyTorchModel
-from torch.utils.data import DataLoader
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
-from src.attack import Attack
-from src.masker import Masker
-from src.metric import Distance, Metric
-from src.utils import append_pickle, create_pickle, timer
+from attack import Attack
+from config import Config
+from masker import Masker
+from metric import Distance, Metric
+from utils import append_pickle, create_pickle, get_fmodel, get_loader, timer
 
 
 @dataclass
 class Runner:
-    loader: DataLoader
-    model: any
-    preprocessing: Optional[dict] = None
     device: Optional[str] = "cpu"
 
-    def __post_init__(self):
-        # replacing the model by foolbox's one.
-        self.model = PyTorchModel(
-            model=self.model.eval(),
-            device=self.device,
-            bounds=(0, 1),
-        )
+    def __init__(self, config: Config):
+        self.model = get_fmodel(config.model)
+        self.loader = get_loader(config.dataset)
+        self.device = torch.device(config.model.device)
 
     @timer
     @torch.no_grad()

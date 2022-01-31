@@ -1,0 +1,4 @@
+module: models.googlenet
+model: GoogLeNet
+state_dict_path: "../../../models/state_dicts/googlenet.pt"
+device: "cpu"

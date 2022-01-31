@@ -1,0 +1,2 @@
+path: "../../../datasets/cifar10/val"
+transforms: { "ToTensor" }

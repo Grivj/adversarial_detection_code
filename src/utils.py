@@ -10,6 +10,12 @@ from torchvision.datasets import ImageFolder
 from config import ConfigDatasets, ConfigModels
 
 
+def append_basedir():
+    currentdir = os.path.dirname(os.path.realpath(__file__))
+    basedir = os.path.dirname(currentdir)
+    sys.path.append(basedir)
+
+
 def get_transforms(transforms_config: dict) -> list:
     module = import_module("torchvision.transforms")
     transforms = []
@@ -25,32 +31,13 @@ def get_transforms(transforms_config: dict) -> list:
 
 
 def get_dataset(config: ConfigDatasets):
-    # default, base pytorch ImageFolder is used.
-    if "module" not in config:
-        return ImageFolder(
-            root=config.path,
-            transform=get_transforms(config.transforms)
-            if "transforms" in config
-            else None,
-        )
-
-    # custom dataset module and class.
-    if "class_" not in config:
-        raise ValueError(
-            "If a custom module is specified for the dataset, class_ must also be specified (Name of the class in the module)"
-        )
-    currentdir = os.path.dirname(os.path.realpath(__file__))
-    basedir = os.path.dirname(currentdir)
-    sys.path.append(basedir)
+    append_basedir()
     module = import_module(config.module)
-    if "class_" in config:
-        class_ = getattr(module, config.class_)
-        return class_(
-            root=config.path,
-            transform=get_transforms(config.transforms)
-            if "transforms" in config
-            else None,
-        )
+    class_ = getattr(module, config.class_)
+    return class_(
+        root=config.data_path,
+        transform=get_transforms(config.transforms),
+    )
 
 
 def get_loader(config: ConfigDatasets):
@@ -65,19 +52,18 @@ def get_loader(config: ConfigDatasets):
 
 
 def get_model(config: ConfigModels):
-    currentdir = os.path.dirname(os.path.realpath(__file__))
-    basedir = os.path.dirname(currentdir)
-    sys.path.append(basedir)
-
+    append_basedir()
     module = import_module(config.module)
-    model = getattr(module, config.model)
-    if "pretrained" in config:
+    model = getattr(module, config.class_)
+    if config.pretrained and config.state_dict_path is None:
         return model(pretrained=True).eval()
-    if "state_dict_path" in config:
+    if config.state_dict_path is not None and config.pretrained:
         import torch
 
         model = model()
-        return model.load_state_dict(torch.load(config.state_dict_path)).eval()
+        model.load_state_dict(torch.load(config.state_dict_path))
+        return model.eval()
+    return model.eval()
 
 
 def get_fmodel(config: ConfigModels):

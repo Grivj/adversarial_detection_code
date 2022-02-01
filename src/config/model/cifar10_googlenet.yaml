@@ -1,0 +1,3 @@
+defaults:
+  - base_cifar10googlenet
+state_dict_path: "../../../models/state_dicts/googlenet.pt"

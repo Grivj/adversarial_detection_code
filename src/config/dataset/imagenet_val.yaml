@@ -1,0 +1,5 @@
+defaults:
+  - base_imagenette
+
+name: imagenette_val
+data_path: "../../../datasets/imagenet/val"

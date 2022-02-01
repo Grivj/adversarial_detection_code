@@ -56,12 +56,13 @@ class Runner:
         return self.unpack_batch_to_device(next(iter(self.loader)))
 
     @timer
-    def run(self, pickle_path: str, standard_deviations: torch.Tensor):
+    def run(self, pickle_path: str, standard_deviations: list[float]):
         """
         Run #n_batches number of batches threw the model.
         Each input is predicted #standard_deviations amount of time(s).
         Finally, the results are appended into a pickle file -> pickle_path.
         """
+        standard_deviations = torch.as_tensor(standard_deviations)
 
         # initialize the pickle file at {pickle_path}.
         create_pickle(pickle_path)

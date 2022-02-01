@@ -1,4 +1,0 @@
-module: datasets.imagenet.imagenette
-class_: ImageNette
-path: "../../../datasets/imagenet/val"
-transforms: { "Resize": 266, "CenterCrop": 256, "ToTensor" }

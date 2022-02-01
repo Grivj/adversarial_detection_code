@@ -1,0 +1,4 @@
+defaults:
+  - noise: .1-.001
+name: "normal_run"
+results_path: "../../../results/"

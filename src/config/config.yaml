@@ -1,3 +1,4 @@
 defaults:
-  - dataset: imagenet
-  - model: imagenet
+  - dataset: imagenet_val
+  - model: imagenet_googlenet
+  - mode: accuracy

@@ -6,12 +6,17 @@ from typing import List, Optional
 import foolbox as fb
 import torch
 
+from config import AttackConfig
+from utils import append_basedir
+
 
 @dataclass
 class Attack:
-    module: abc.ABCMeta
-    epsilon: float
-    targets: Optional[List[int]] = field(default_factory=list)
+    def __init__(self, config: AttackConfig, targets: Optional[List[int]]):
+        append_basedir()
+        self.class_ = getattr(fb.attacks, config.class_)
+        self.epsilon = config.epsilon
+        self.targets = targets
 
     def __call__(
         self, model: any, image: torch.Tensor, label: torch.Tensor
@@ -26,4 +31,4 @@ class Attack:
             else fb.criteria.Misclassification(label)
         )
 
-        return self.module()(model, image, target, epsilons=self.epsilon)[0]
+        return self.class_()(model, image, target, epsilons=self.epsilon)[0]

@@ -64,19 +64,11 @@ class CIFAR10GoogLeNetConfig(ConfigModels):
 
 
 @dataclass
-class Mode:
+class AttackConfig:
     name: str
-
-
-@dataclass
-class AccuracyMode:
-    name = "accuracy"
-
-
-@dataclass
-class NormalRunMode:
-    name = "normal_run"
-    results_path = "../results/"
+    class_: str
+    epsilon: float
+    targeted: bool = False
 
 
 @dataclass

@@ -117,7 +117,7 @@ class Runner:
         append_pickle(
             pickle_path,
             {
-                "attack_module": attack.module.__class__.__name__,
+                "attack_module": attack.class_.__class__.__name__,
                 "attack_epsilon": attack.epsilon,
                 "attack_targeted": bool(attack.targets),
             },

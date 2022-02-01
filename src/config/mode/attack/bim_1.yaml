@@ -1,0 +1,4 @@
+name: bim_1
+class_: L2BasicIterativeAttack
+epsilon: 1.0
+targeted: False

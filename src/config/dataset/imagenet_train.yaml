@@ -1,5 +1,10 @@
-defaults:
-  - base_imagenette
-
-name: imagenette_train
-data_path: "../../../datasets/imagenet/train"
+_target_: datasets.imagenet.imagenette.ImageNette
+root: datasets/imagenet/val
+transform:
+  _target_: torchvision.transforms.Compose
+  transforms:
+    - _target_: torchvision.transforms.ToTensor
+    - _target_: torchvision.transforms.Resize
+      size: 256
+    - _target_: torchvision.transforms.CenterCrop
+      size: 256

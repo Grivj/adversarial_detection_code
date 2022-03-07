@@ -4,7 +4,7 @@ from typing import Optional
 import torch
 from tqdm import tqdm
 
-from attack import Attack
+# from attack import Attack
 from config import Config
 from masker import Masker
 from metric import Distance, Metric
@@ -95,63 +95,62 @@ class Runner:
                 },
             )
 
-    @timer
-    def run_with_attack(
-        self,
-        pickle_path: str,
-        standard_deviations: torch.Tensor,
-        attack: Attack,
-    ):
-        """
-        Run #n_batches number of batches threw the model.
-        Generate adversarial examples with {attack: Attack}
-        Each input is predicted #standard_deviations amount of time(s).
-        Finally, the results are appended into a pickle file -> pickle_path.
-        """
+    # def run_with_attack(
+    #     self,
+    #     pickle_path: str,
+    #     standard_deviations: torch.Tensor,
+    #     attack: Attack,
+    # ):
+    #     """
+    #     Run #n_batches number of batches threw the model.
+    #     Generate adversarial examples with {attack: Attack}
+    #     Each input is predicted #standard_deviations amount of time(s).
+    #     Finally, the results are appended into a pickle file -> pickle_path.
+    #     """
 
-        # initialize the pickle file at {pickle_path}.
-        create_pickle(pickle_path)
-        # append pickle file with standard_deviations.
-        append_pickle(pickle_path, {"standard_deviations": standard_deviations})
+    #     # initialize the pickle file at {pickle_path}.
+    #     create_pickle(pickle_path)
+    #     # append pickle file with standard_deviations.
+    #     append_pickle(pickle_path, {"standard_deviations": standard_deviations})
 
-        append_pickle(
-            pickle_path,
-            {
-                "attack_module": attack.class_.__class__.__name__,
-                "attack_epsilon": attack.epsilon,
-                "attack_targeted": bool(attack.targets),
-            },
-        )
+    #     append_pickle(
+    #         pickle_path,
+    #         {
+    #             "attack_module": attack.class_.__class__.__name__,
+    #             "attack_epsilon": attack.epsilon,
+    #             "attack_targeted": bool(attack.targets),
+    #         },
+    #     )
 
-        for batch_id, batch in tqdm(enumerate(self.loader), total=len(self.loader)):
-            x, y = self.unpack_batch_to_device(batch)
+    #     for batch_id, batch in tqdm(enumerate(self.loader), total=len(self.loader)):
+    #         x, y = self.unpack_batch_to_device(batch)
 
-            # generating adversarial examples
-            a = attack(self.model, x, y)
-            attack_distance = Distance(x, a)
-            del x
+    #         # generating adversarial examples
+    #         a = attack(self.model, x, y)
+    #         attack_distance = Distance(x, a)
+    #         del x
 
-            logits = []
-            distances_l2 = []
-            distances_PSNR = []
+    #         logits = []
+    #         distances_l2 = []
+    #         distances_PSNR = []
 
-            masker = Masker(a, standard_deviations)
-            for mask in masker:
-                logits.append(self.model(mask))
-                d = Distance(a, mask)
-                distances_l2.append(d.l2)
-                distances_PSNR.append(d.PSNR)
+    #         masker = Masker(a, standard_deviations)
+    #         for mask in masker:
+    #             logits.append(self.model(mask))
+    #             d = Distance(a, mask)
+    #             distances_l2.append(d.l2)
+    #             distances_PSNR.append(d.PSNR)
 
-            # append pickle file with batch data.
-            append_pickle(
-                pickle_path,
-                {
-                    "batch_id": batch_id,
-                    "logits": torch.cat(logits).cpu(),
-                    "labels": y.cpu(),
-                    "distances_l2": torch.tensor(distances_l2).cpu(),
-                    "distances_PSNR": torch.tensor(distances_PSNR).cpu(),
-                    "attack_distance_l2": attack_distance.l2.item(),
-                    "attack_distance_PSNR": attack_distance.PSNR.item(),
-                },
-            )
+    #         # append pickle file with batch data.
+    #         append_pickle(
+    #             pickle_path,
+    #             {
+    #                 "batch_id": batch_id,
+    #                 "logits": torch.cat(logits).cpu(),
+    #                 "labels": y.cpu(),
+    #                 "distances_l2": torch.tensor(distances_l2).cpu(),
+    #                 "distances_PSNR": torch.tensor(distances_PSNR).cpu(),
+    #                 "attack_distance_l2": attack_distance.l2.item(),
+    #                 "attack_distance_PSNR": attack_distance.PSNR.item(),
+    #             },
+    #         )

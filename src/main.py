@@ -28,10 +28,10 @@ def main(cfg: Config):
         runner.run_accuracy()
 
     if cfg.mode.name == "normal_run":
-        results_folder = cfg.mode.results_path + cfg.dataset.name + "/" + cfg.model.name + "/"
-        results_file = (
-            results_folder + cfg.mode.noise.name + ".pt"
+        results_folder = (
+            cfg.mode.results_path + cfg.dataset.name + "/" + cfg.model.name + "/"
         )
+        results_file = results_folder + cfg.mode.noise.name + ".pt"
         import os
 
         if not os.path.exists(results_folder):

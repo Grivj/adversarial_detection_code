@@ -1,3 +1,7 @@
-defaults:
-  - base_cifar10googlenet
-state_dict_path: "../../../models/state_dicts/googlenet.pt"
+instance:
+  _target_: models.googlenet.GoogLeNet
+state_dict_path: models/state_dicts/googlenet.pt
+preprocessing:
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  axis: -3

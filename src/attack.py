@@ -1,6 +1,5 @@
-import abc
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional
 
 import foolbox as fb

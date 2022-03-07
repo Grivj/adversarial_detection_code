@@ -1,5 +1,4 @@
-defaults:
-  - base_cifar10
-
-name: cifar10_val
-data_path: "../../../datasets/cifar10/val"
+_target_: torchvision.datasets.ImageFolder
+root: datasets/cifar10/val
+transform:
+  _target_: torchvision.transforms.ToTensor

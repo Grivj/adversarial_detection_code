@@ -1,5 +1,5 @@
 _target_: datasets.imagenet.imagenette.ImageNette
-root: datasets/imagenet/val
+root: datasets/imagenet/train
 transform:
   _target_: torchvision.transforms.Compose
   transforms:

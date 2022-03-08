@@ -2,23 +2,24 @@ from dataclasses import dataclass
 from typing import Optional
 
 import torch
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 
 # from attack import Attack
-from config import Config
+# from config import Config
 from masker import Masker
 from metric import Distance, Metric
-from utils import append_pickle, create_pickle, get_fmodel, get_loader, timer
+from pickle_utils import append_pickle, create_pickle
+from utils import timer
 
 
 @dataclass
 class Runner:
     device: Optional[str] = "cpu"
 
-    def __init__(self, config: Config):
-        self.model = get_fmodel(config.model)
-        self.loader = get_loader(config.dataset)
-        self.device = torch.device(config.model.device)
+    def __init__(self, model, loader, device: str = "cpu"):
+        self.model = model
+        self.loader = loader
+        self.device = torch.device(device)
 
     @timer
     @torch.no_grad()
